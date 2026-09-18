@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kardex-v1';
+const CACHE_NAME = 'kardex-v2';
 const ARCHIVOS = [
   './index.html',
   './style.css',
@@ -25,21 +25,22 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Nunca cachear las llamadas al backend (Apps Script): siempre ir a la red
-  // o fallar limpiamente si no hay conexión (lo maneja app.js).
+  // Nunca cachear las llamadas al backend (Apps Script): siempre ir a la red.
   if (url.hostname.includes('script.google.com')) return;
+  if (event.request.method !== 'GET') return;
 
+  // Estrategia "red primero": si hay internet, siempre trae la versión más
+  // nueva de index.html/app.js/etc. (importante porque app.js tiene la URL
+  // de Apps Script y puede cambiar). Si no hay internet, usa la copia guardada.
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(resp => {
-        // guarda copia para la próxima vez que esté offline
-        if (event.request.method === 'GET' && resp.status === 200) {
+    fetch(event.request)
+      .then(resp => {
+        if (resp.status === 200) {
           const clone = resp.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return resp;
-      }).catch(() => cached);
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
