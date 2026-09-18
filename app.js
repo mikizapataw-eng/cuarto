@@ -5,7 +5,7 @@
    al implementar Code.gs (Implementar > Nueva implementación).
    ========================================================================= */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbzFT_100Elhwt7l2tq2KTEOE9Px51TL73cS62_pM-2e5vpUcswcLtX7v361-EAw5oBiSg/exec'
+  API_URL: https://script.google.com/macros/s/AKfycbzFT_100Elhwt7l2tq2KTEOE9Px51TL73cS62_pM-2e5vpUcswcLtX7v361-EAw5oBiSg/exec
 };
 
 /* ---------------- almacenamiento local ---------------- */
